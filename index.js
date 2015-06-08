@@ -129,6 +129,13 @@ var authStore = Reflux.createStore({
 });
 
 
+// exports
+
+global.meAction = meAction;
+global.authAction = authAction;
+global.meStore = meStore;
+global.authStore = authStore;
+
 // routes
 
 var routes = require('routes');
@@ -157,7 +164,6 @@ e18nAction.init.completed.once(function() {
         return route.name;
       })
       .map(function(route) {
-        console.log(route)
         return new Promise(function(resolve) {
           return i18n.loadNamespace(route.name, resolve);
         });
