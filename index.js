@@ -46,8 +46,13 @@ function getMeUrl () {
 
 }
 
+function needLogin () {
+  return config.eadmin && config.eadmin.baseUrl;
+}
+
 meAction.fetch.listen(function() {
   var url = getMeUrl();
+
   request
   .get(url)
   .query({access_token: authStore.data})
@@ -61,7 +66,7 @@ meAction.fetch.listen(function() {
 
 meAction.fetch.completed.once(function() {
 
-  e18nAction.init()
+  e18nAction.init();
 });
 
 //// auth
@@ -142,18 +147,28 @@ var routes = require('routes');
 
 // auto start
 
-var path, ref;
 
-path = (ref = location.hash) != null ? ref.replace('#', '') : void 0;
+function login () {
+  var path, ref;
 
-if (authStore.data) {
-  meAction.fetch();
-  meAction.fetch.failed.once(function() {
-    return window.location.replace("/login.html?path=" + path);
-  });
-} else {
-  window.location.replace("/login.html?path=" + path);
+  path = (ref = location.hash) != null ? ref.replace('#', '') : void 0;
+
+  if (authStore.data) {
+    meAction.fetch();
+    meAction.fetch.failed.once(function() {
+      return window.location.replace("/login.html?path=" + path);
+    });
+  } else {
+    window.location.replace("/login.html?path=" + path);
+  }
+
 }
+
+if (needLogin()) {
+  login();
+} else{
+  e18nAction.init();
+};
 
 e18nAction.init.completed.once(function() {
   Router.run(routes, function(Handler, state) {
